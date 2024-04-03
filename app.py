@@ -9,11 +9,11 @@ app = Flask(__name__)
 
 classes = ["There is skin in the picture", "There is water in the picture", "There is wood in the picture"]
 device = "cuda" if torch.cuda.is_available() else "cpu"
+model, preprocess = clip.load("RN50", device=device)
+text = clip.tokenize(classes).to(device)
 
 @app.route('/', methods=['POST'])
 def predict_surface():
-    model, preprocess = clip.load("RN50", device=device)
-    text = clip.tokenize(classes).to(device)
     image_data = request.data
     image_pil = Image.open(BytesIO(image_data))
     image_tensor = preprocess(image_pil).unsqueeze(0).to(device)
